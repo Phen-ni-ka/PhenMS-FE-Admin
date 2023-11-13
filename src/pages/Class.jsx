@@ -28,6 +28,12 @@ const Class = () => {
     });
   }, []);
 
+  const deleteSubjectHandle = (id) => {
+    console.log(id);
+
+    axiosClient.delete("/delete-class/" + id).then(() => {});
+  };
+
   const addClassHandle = (event) => {
     event.preventDefault();
     console.log(nameRef.current.value);
@@ -43,11 +49,15 @@ const Class = () => {
       .post("create-class", payload)
       .then(() => {
         toast.success("Tạo mới thành công");
-        setIsAdding(false);
       })
       .catch(() => {
         toast.error("Tạo mới thất bại");
       });
+
+    axiosClient.get("list-classes/" + subjectId).then(({ data }) => {
+      setClasses(data);
+      setIsAdding(false);
+    });
   };
 
   if (!token) {
@@ -122,7 +132,7 @@ const Class = () => {
                   {classes.map((el, index) => (
                     <tr key={index}>
                       <td>
-                        <span>{el.name}</span>
+                        <span>{el.class_name}</span>
                       </td>
                       <td>
                         <span>{el.max_students}</span>
@@ -148,7 +158,11 @@ const Class = () => {
                       <td>
                         <div>
                           <TbEdit color="blue" size={24} />
-                          <RiDeleteBin5Line color="red" size={24} />
+                          <RiDeleteBin5Line
+                            color="red"
+                            size={24}
+                            onClick={() => deleteSubjectHandle(el.id)}
+                          />
                         </div>
                       </td>
                     </tr>
